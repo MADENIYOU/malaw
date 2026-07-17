@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/constants/location_coordinates.dart';
 import '../../core/services/notification_service.dart';
 import '../../core/state/session_provider.dart';
 import '../../core/theme/app_colors.dart';
@@ -50,6 +52,14 @@ class _TripTrackingScreenState extends State<TripTrackingScreen> {
   String _libelle(Trip trip) => trip.mode == TripMode.interregions
       ? '${trip.villeDepart} → ${trip.villeArrivee}'
       : '${trip.adresseDepart} → ${trip.destination}';
+
+  LatLng _origin(Trip trip) => LocationCoordinates.forName(
+    trip.mode == TripMode.interregions ? trip.villeDepart! : trip.adresseDepart!,
+  );
+
+  LatLng _destination(Trip trip) => LocationCoordinates.forName(
+    trip.mode == TripMode.interregions ? trip.villeArrivee! : trip.destination!,
+  );
 
   Future<void> _load() async {
     setState(() => _state = const ViewState.loading());
@@ -118,17 +128,63 @@ class _TripTrackingScreenState extends State<TripTrackingScreen> {
                       Stack(
                         alignment: Alignment.topRight,
                         children: [
-                          Container(
-                            height: 170,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE9E4D8),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              'assets/illustrations/kirikou_car_map_icon.jpg',
-                              height: 90,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: SizedBox(
+                              height: 200,
+                              width: double.infinity,
+                              child: Builder(
+                                builder: (context) {
+                                  final origin = _origin(trip);
+                                  final dest = _destination(trip);
+                                  final progress = ((12 - _minutesRestantes) / 12)
+                                      .clamp(0.0, 1.0);
+                                  final carPos = LatLng(
+                                    origin.latitude +
+                                        (dest.latitude - origin.latitude) *
+                                            progress,
+                                    origin.longitude +
+                                        (dest.longitude - origin.longitude) *
+                                            progress,
+                                  );
+                                  return GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      target: origin,
+                                      zoom: 13,
+                                    ),
+                                    zoomControlsEnabled: false,
+                                    myLocationButtonEnabled: false,
+                                    markers: {
+                                      Marker(
+                                        markerId: const MarkerId('origin'),
+                                        position: origin,
+                                        icon: BitmapDescriptor.defaultMarkerWithHue(
+                                          BitmapDescriptor.hueGreen,
+                                        ),
+                                      ),
+                                      Marker(
+                                        markerId: const MarkerId('destination'),
+                                        position: dest,
+                                      ),
+                                      Marker(
+                                        markerId: const MarkerId('car'),
+                                        position: carPos,
+                                        icon: BitmapDescriptor.defaultMarkerWithHue(
+                                          BitmapDescriptor.hueOrange,
+                                        ),
+                                      ),
+                                    },
+                                    polylines: {
+                                      Polyline(
+                                        polylineId: const PolylineId('route'),
+                                        points: [origin, dest],
+                                        color: AppColors.primary,
+                                        width: 4,
+                                      ),
+                                    },
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           Padding(

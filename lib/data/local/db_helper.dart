@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 import '../../core/utils/retry_util.dart';
 import '../models/driver.dart';
@@ -16,14 +18,26 @@ class DbHelper {
   static final DbHelper instance = DbHelper._internal();
 
   Database? _db;
+  Future<Database>? _opening;
 
+  /// Les appels concurrents (plusieurs repositories interrogés en parallèle
+  /// au chargement d'un écran) doivent attendre la MÊME ouverture en cours
+  /// plutôt que d'en déclencher une deuxième — sqflite natif tolère ce genre
+  /// de course, mais l'implémentation web (IndexedDB) se retrouve verrouillée
+  /// pendant plusieurs secondes si deux `openDatabase` se chevauchent.
   Future<Database> get database async {
     if (_db != null) return _db!;
-    _db = await _open();
+    _opening ??= _open();
+    _db = await _opening;
     return _db!;
   }
 
   Future<Database> _open() async {
+    // Sur le web, sqflite natif n'existe pas : on bascule sur l'implémentation
+    // WASM/IndexedDB, transparente pour le reste du code (même API).
+    if (kIsWeb) {
+      databaseFactory = databaseFactoryFfiWeb;
+    }
     final databasesDir = await getDatabasesPath();
     final dbPath = p.join(databasesDir, 'covoiturage_app.db');
 
@@ -230,6 +244,7 @@ class DbHelper {
     if (db != null) {
       await db.close();
       _db = null;
+      _opening = null;
     }
   }
 }

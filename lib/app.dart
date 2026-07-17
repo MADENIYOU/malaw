@@ -7,6 +7,7 @@ import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
 import 'core/state/session_provider.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/web_phone_shell.dart';
 import 'data/models/enums.dart';
 
 class CovoiturageApp extends StatefulWidget {
@@ -58,6 +59,8 @@ class _CovoiturageAppState extends State<CovoiturageApp> {
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         routerConfig: _router,
+        builder: (context, child) =>
+            WebPhoneShell(child: child ?? const SizedBox.shrink()),
       ),
     );
   }
