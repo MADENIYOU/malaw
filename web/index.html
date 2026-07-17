@@ -37,6 +37,73 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHcx-O6rX1UHiLDVMSdEJDiUg5tbW7Bts" async defer></script>
 </head>
 <body>
+  <!-- Splash de chargement : visible immédiatement, retiré dès que Flutter
+       affiche sa première vue. Évite l'écran blanc avant la page d'auth. -->
+  <style>
+    #malaw-splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      background: #FDF6EC;
+      z-index: 999999;
+      transition: opacity .35s ease;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    #malaw-splash.malaw-hide { opacity: 0; pointer-events: none; }
+    #malaw-splash img { width: 88px; height: 88px; }
+    #malaw-splash .malaw-name {
+      color: #D97706;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+    #malaw-splash .malaw-tag {
+      color: #B4813C;
+      font-size: 13px;
+      margin-top: -12px;
+    }
+    #malaw-splash .malaw-spinner {
+      width: 34px;
+      height: 34px;
+      border: 3px solid rgba(217, 119, 6, .25);
+      border-top-color: #D97706;
+      border-radius: 50%;
+      animation: malaw-spin .8s linear infinite;
+    }
+    @keyframes malaw-spin { to { transform: rotate(360deg); } }
+  </style>
+  <div id="malaw-splash">
+    <img src="icons/Icon-192.png" alt="Malaw" />
+    <div class="malaw-name">Malaw</div>
+    <div class="malaw-tag">On avance ensemble</div>
+    <div class="malaw-spinner"></div>
+  </div>
+  <script>
+    // Retire le splash dès que Flutter monte sa vue (première frame rendue).
+    (function () {
+      var splash = document.getElementById('malaw-splash');
+      if (!splash) return;
+      function remove() {
+        if (!splash || splash.classList.contains('malaw-hide')) return;
+        splash.classList.add('malaw-hide');
+        setTimeout(function () { splash && splash.remove(); }, 400);
+      }
+      var obs = new MutationObserver(function () {
+        if (document.querySelector('flutter-view, flt-glass-pane')) {
+          obs.disconnect();
+          remove();
+        }
+      });
+      obs.observe(document.body, { childList: true, subtree: true });
+      // Filet de sécurité : on retire au plus tard après 20 s.
+      setTimeout(remove, 20000);
+    })();
+  </script>
+
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze *)",
+      "Read(//home/ubuntu/flutter/bin/**)",
+      "Read(//opt/flutter/**)",
+      "Bash(command -v fvm)",
+      "Bash(~/flutter/bin/flutter analyze *)",
+      "Bash(curl -sSI https://malaw.xn--kalma-tqa.com)",
+      "Bash(~/flutter/bin/flutter build *)",
+      "Read(//var/www/**)",
+      "Bash(sudo -n true)",
+      "Bash(curl -sSI https://malaw.xn--kalma-tqa.com/)",
+      "Bash(python3 -c \"import json;d=json.load\\(open\\('.flutter-plugins-dependencies'\\)\\);[print\\(p['name'],[k for k,v in p['platforms'].items\\(\\)]\\) for p in d['plugins']['web']]\")",
+      "Bash(~/flutter/bin/flutter clean *)",
+      "Bash(~/flutter/bin/flutter pub *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
+  }
+}

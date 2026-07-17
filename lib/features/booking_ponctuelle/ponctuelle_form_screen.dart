@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/locations.dart';
 import '../../core/state/session_provider.dart';
+import '../../core/widgets/use_my_location_button.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/friendly_error.dart';
 import '../../data/models/enums.dart';
@@ -138,6 +139,12 @@ class _PonctuelleFormScreenState extends State<PonctuelleFormScreen> {
                           .map((n) => DropdownMenuItem(value: n, child: Text(n)))
                           .toList(),
                       onChanged: (v) => setState(() => _adresseDepart = v),
+                    ),
+                    UseMyLocationButton(
+                      onLocated: (name) => setState(() {
+                        _adresseDepart = name;
+                        _errorAdresse = null;
+                      }),
                     ),
                     const SizedBox(height: 16),
                     InkWell(
