@@ -4,9 +4,11 @@
         android:label="Malaw"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- TODO: renseigner la clé Google Maps avant de tester les écrans carte.
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDHcx-O6rX1UHiLDVMSdEJDiUg5tbW7Bts"/>
+            android:value=""/>
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

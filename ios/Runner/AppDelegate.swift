@@ -8,7 +8,7 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey("AIzaSyDHcx-O6rX1UHiLDVMSdEJDiUg5tbW7Bts")
+    // TODO: renseigner la clé Google Maps (GMSServices.provideAPIKey("...")) avant de tester les écrans carte.
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
