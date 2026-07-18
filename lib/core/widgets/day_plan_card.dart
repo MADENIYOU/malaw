@@ -4,6 +4,7 @@ import '../../data/models/enums.dart';
 import '../constants/locations.dart';
 import '../theme/app_colors.dart';
 import '../utils/date_fr.dart';
+import 'use_my_location_button.dart';
 
 /// Carte d'une entrée du planning (une case du calendrier, indépendante).
 /// Adresses choisies dans une liste mockée (pas de géocodage réel).
@@ -105,6 +106,7 @@ class DayPlanCard extends StatelessWidget {
                   .toList(),
               onChanged: onAdresseChanged,
             ),
+            UseMyLocationButton(onLocated: onAdresseChanged),
             const SizedBox(height: 10),
             InkWell(
               onTap: () => _pickHeure(context),
